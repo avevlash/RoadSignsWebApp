@@ -1,0 +1,139 @@
+﻿@model Web.ViewModels.AddQuestionViewModel;
+<main class="container mt-5 container-fluid">
+                <h1 class="justify-content-center">
+                    Добавить вопрос
+                </h1>
+    <form asp-area="" enctype="multipart/form-data" asp-action="AddQuestion" asp-controller="Admin" method="post">
+        <div class="validation" asp-validation-summary="ModelOnly" />
+
+        <div class="form-row card mb-4 mr-5 ml-5">
+            <div id="form_create" class="mb-4 mr-5 ml-5 mt-5">
+                <div class="form-group">
+                    <label class="control-label" asp-for="Question.Text">Текст:</label>
+                    @Html.TextAreaFor(m => m.Question.Text, new { @name = "Quest", @class = "form-control", @placeholder = "Текст вопроса" })
+
+                </div>
+                <div class="form-group">
+                    <label>Связанный знак: </label>
+                    <select class="browser-default custom-select" asp-for="Question.Sign.ID"
+                            asp-items="@(new SelectList(Model.Signs, "ID", "Name"))">
+                        <option>Select one</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Предназначение вопроса: </label>
+                    <div class="form-inline">
+                        <label>
+                            <input type="checkbox" name="kids" value="true" asp-for="Question.ForKids" />
+                            Для детей
+                        </label>
+                        <label>
+                            <input type="checkbox" name="kids" value="true" asp-for="Question.ForPedestrians" />
+                            Для пешеходов
+                        </label>
+                        <label>
+                            <input type="checkbox" name="kids" value="true" asp-for="Question.ForDrivers" />
+                            Для водителей
+                        </label>
+                        <label>
+                            <input type="checkbox" name="kids" value="true" asp-for="Question.ForBikers" />
+                            Для велосипедистов
+                        </label>
+                    </div>
+                </div>
+                <div class="justify-content-center form-group">
+                    <label>Варианты ответа:</label>
+                    <button id="add_new_answer" type="button" class="btn btn-group-toggle"><span class="fa fa-plus-circle"></span>Добавить вариант</button>
+                </div>
+                <!--Варианты ответа-->
+
+                <br />
+                <button type="submit" id="create_btn" class="btn btn-blue-grey">Добавить вопрос</button>
+
+            </div>
+        </div>
+    </form>
+</main>
+<script type="text/javascript" src="~/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    function deleteAnswer() {
+        var items = $('.form-group');
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].id[items[i].id.length - 1] === this.id[this.id.length - 1]) {
+                items[i].remove();
+            }
+        }
+        var answerscheck = $('.custom-control-indicator');
+        var answersText = $('.open');
+        //  alert(answerscheck.length + '_' + answersText.length);
+        for (let i = 0; i < answersText.length; i++) {
+            answersText[i].name = 'Variants[' + index + '].Text';
+            answersText[i].id = 'Variants[' + index + ']_Text';
+
+            answerscheck[i].name = 'Variants[' + index + '].IsCorrect';
+            answerscheck[i].id = 'Variants[' + index + ']_IsCorrect';
+        }
+    }
+
+    $('#add_new_answer').click(function () {
+        var index = $('.custom-control-indicator').length;
+        //  alert(index);
+        var div = document.createElement('div');
+        div.classList.add('form-group');
+        div.id = 'form_group_' + index;
+        var divrow = document.createElement('div');
+        divrow.classList.add('form-row');
+        var divcol = document.createElement('div');
+        divcol.classList.add('col');
+        var divcol2 = document.createElement('div');
+        divcol2.classList.add('col');
+
+        var divcol3 = document.createElement('div');
+        divcol3.classList.add('col');
+        var btnDelete = document.createElement('button');
+        btnDelete.id = 'btn' + index;
+        btnDelete.type = 'button';
+        btnDelete.className = 'btn btn-danger';
+        btnDelete.innerText = "Удалить";
+        var span = document.createElement('span');
+        span.className = 'fa fa-minus-circle';
+        btnDelete.appendChild(span);
+
+        //$('#' + btnDelete.id.toString()).bind("click", sayHello);
+        btnDelete.onclick = deleteAnswer;
+        divcol3.appendChild(btnDelete);
+        // alert('#' + btnDelete.id);
+
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.setAttribute("autocomplete", "off");
+        input.setAttribute("required", '""');
+
+        input.name = 'Question.Variants[' + index + '].Answer';
+        input.id = 'Variants[' + index + ']_Text';
+        input.classList.add('form-control');
+        input.classList.add('open');
+        var checkbox = document.createElement('input');
+        checkbox.classList.add('custom-control-indicator');
+        checkbox.id = 'Variants[' + index + ']_IsCorrect';
+        checkbox.name = 'Question.Variants[' + index + '].IsCorrect';
+        checkbox.type = 'checkbox';
+        checkbox.value = true;
+        var label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+        label.innerText = "Правильный вариант";
+        divcol.appendChild(input);
+        divcol2.appendChild(checkbox);
+        divcol2.appendChild(label);
+        divrow.appendChild(divcol);
+        divrow.appendChild(divcol2);
+        divrow.appendChild(divcol3);
+        div.appendChild(divrow);
+
+        $('#create_btn').before(div);
+    });
+
+
+
+</script>

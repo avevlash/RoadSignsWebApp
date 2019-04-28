@@ -1,0 +1,46 @@
+﻿@model List<Data.Models.Sign>
+@{
+    ViewData["Title"] = "Управление знаками";
+}
+
+<main class="container-fluid">
+    <div class="jumbotron-fluid check">
+        <h1>Управление дорожными знаками</h1>
+    </div>
+    <br />
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>Название</th>
+                <th>Тип</th>
+                <th>Текст</th>
+                <th>Для детей</th>
+                <th>Для пешеходов</th>
+                <th>Для водителей</th>
+                <th>Для велосипедистов</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>@item.Name</td>
+        <td>@item.Type</td>
+        <td>@item.Information</td>
+        <td>@(item.ForKids ? "Да" : "Нет")</td>
+        <td>@(item.ForPedestrians ? "Да" : "Нет")</td>
+        <td>@(item.ForDrivers ? "Да" : "Нет")</td>
+        <td>@(item.ForBikers ? "Да" : "Нет")</td>
+        <td> <a asp-action="EditSign" asp-controller="Admin" asp-route-modelid="@item.ID" class="btn btn-dark-green">Изменить</a> </td>
+        <td> <a asp-action="RemoveSign" asp-controller="Admin" asp-route-modelid="@item.ID" class="btn btn-danger">Удалить</a> </td>
+    </tr>
+        }
+    </table>
+    <br />
+    <a asp-area="" asp-action="AddSign" asp-controller="Admin" class="btn btn-blue">
+        Добавить знак
+    </a>
+</main>
+
+

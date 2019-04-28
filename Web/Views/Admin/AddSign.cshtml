@@ -1,0 +1,69 @@
+﻿@model Data.Models.Sign;
+    <main class="pt-5 max-lg-5">
+       
+                    <h4 class="mb-2 mb-sm-0 pt-1 jumbotron-fluid">
+                        <span>Добавить вопрос</span>
+                    </h4>
+                
+        <form enctype="multipart/form-data" asp-action="AddSign" asp-controller="Admin" method="post">
+            <div class="validation" asp-validation-summary="ModelOnly"></div>
+                    <div class="form-group">
+                        <input asp-for="Name" type="text" placeholder="Название знака" class="form-control" value="" />
+                    </div>
+                    <div class="form-group">
+                        <label for="select1">Тип знака: </label>
+                        <select id="select1" asp-for="Type" class="browser-default custom-select">
+                            <option value="Запрещающий">Запрещающий</option>
+                            <option value="Предупреждающий">Предупреждающий</option>
+                            <option value="Знак приоритета">Знак приоритета</option>
+                            <option value="Предписывающий">Предписывающий</option>
+                            <option value="Информационно-указательный">Информационно-указательный</option>
+                            <option value="Знак сервиса">Знак сервиса</option>
+                            <option value="Табличка к знаку">Табличка к знаку</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroupFileAddon01">Загрузка</span>
+                            </div>
+                            <div class="custom-file">
+                                <input name="uploadImage" type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                                <label class="custom-file-label" for="inputGroupFile01">Картинка знака</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Информация о знаке</label>
+                        <textarea asp-for="Information" class="form-control rounded-0" id="exampleFormControlTextarea1" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Подсказки</label>
+                        <textarea asp-for="Hints" class="form-control rounded-0" id="exampleFormControlTextarea2" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Предназначение знака: </label>
+                        <div class="form-inline">
+                            <label>
+                                <input type="checkbox" name="kids" value="true" asp-for="ForKids" />
+                                Для детей
+                            </label>
+                            <label>
+                                <input type="checkbox" name="kids" value="true" asp-for="ForPedestrians" />
+                                Для пешеходов
+                            </label>
+                            <label>
+                                <input type="checkbox" name="kids" value="true" asp-for="ForDrivers" />
+                                Для водителей
+                            </label>
+                            <label>
+                                <input type="checkbox" name="kids" value="true" asp-for="ForBikers" />
+                                Для велосипедистов
+                            </label>
+                        </div>
+                    </div>
+
+                    <br />
+                    <button type="submit" class="btn btn-blue-grey justify-content-center">Добавить знак</button>
+        </form>
+    </main>

@@ -1,0 +1,25 @@
+﻿@model Web.ViewModels.RegisterViewModel
+@Html.AntiForgeryToken()
+@if (ViewBag.Message != null)
+{
+    <span class="text-success">@ViewBag.Message</span>
+}
+<span class="alert-danger">
+    @Html.ValidationSummary()
+</span>
+<div class="md-form mb-5">
+    <i class="fas fa-user prefix grey-text"></i>
+    <input asp-for="Name" type="text" id="orangeForm-name" class="form-control validate">
+    <label data-error="wrong" data-success="right" for="orangeForm-name">Имя</label>
+</div>
+<div class="md-form mb-5">
+    <i class="fas fa-envelope prefix grey-text"></i>
+    <input asp-for="Email" type="email" id="orangeForm-email" class="form-control validate">
+    <label data-error="wrong" data-success="right" for="orangeForm-email">Почта</label>
+</div>
+
+<div class="md-form mb-4">
+    <i class="fas fa-lock prefix grey-text"></i>
+    <input asp-for="Password" type="password" id="orangeForm-pass" class="form-control validate">
+    <label data-error="wrong" data-success="right" for="orangeForm-pass">Пароль</label>
+</div>
