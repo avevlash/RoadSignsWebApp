@@ -10,6 +10,6 @@ namespace Service.Interfaces
         Test AddUserTest(User user, string type);
         List<Test> GetUserTests(User user);
         void FinishUserTest(Test test);
-        double GetCorrectAnsPercent(User user);
+        int GetCorrectAnsPercent(User user);
     }
 }

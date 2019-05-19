@@ -18,5 +18,6 @@ namespace Data.Models
         public DbSet<Test> Tests { get; set; }
         public DbSet<Sign> Signs { get; set; }
         public DbSet<Statistic> Statistics { get; set; }
+        public DbSet<SignType> SignTypes { get; set; }
     }
 }

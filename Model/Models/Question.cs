@@ -8,9 +8,9 @@ namespace Data.Models
     public class Question
     {
         public int ID { get; set; }
-        [Required] public string Text { get; set; }
-        [Required] public virtual Sign Sign { get; set; }
-        [Required] public virtual List<Variant> Variants { get; set; }
+        [Display(Name = "Текст вопроса")][Required(ErrorMessage = "Введите текст вопроса")] public string Text { get; set; }
+        public virtual Sign Sign { get; set; }
+        [Required(ErrorMessage = "Введите варианты ответа")] public virtual List<Variant> Variants { get; set; }
         public bool ForKids { get; set; }
         public bool ForPedestrians { get; set; }
         public bool ForBikers { get; set; }

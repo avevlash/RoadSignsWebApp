@@ -11,5 +11,6 @@ namespace Service.Interfaces
         void AddSign(Sign sign);
         Sign GetSign(int id);
         void RemoveSign(Sign sign);
+        List<SignType> GetSignTypes();
     }
 }

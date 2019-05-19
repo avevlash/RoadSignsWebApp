@@ -15,17 +15,13 @@ namespace Service.Implements
         {
             _appContext = ctx;
         }
-        public void AddUser(User user)
+        public User AddUser(User user)
         {
             _appContext.Users.Add(user);
             _appContext.SaveChanges();
+            return user;
         }
 
-        public void EditUser(User user)
-        {
-            _appContext.Users.Update(user);
-            _appContext.SaveChanges();
-        }
         public User GetUserByName(string name, string password) => _appContext.Users.FirstOrDefault(x => x.Email == name && x.PasswordHash == password);
 
         
@@ -34,6 +30,16 @@ namespace Service.Implements
         public void RemoveUser(User user)
         {
             _appContext.Users.Remove(user);
+            _appContext.SaveChanges();
+        }
+
+        public List<User> GetUsers() => _appContext.Users.ToList();
+
+        public void ToggleAdmin(string id)
+        {
+            User user = _appContext.Users.Find(id);
+            user.IsAdmin = !user.IsAdmin;
+            _appContext.Users.Update(user);
             _appContext.SaveChanges();
         }
     }

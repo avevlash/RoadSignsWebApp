@@ -7,6 +7,7 @@ using Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Web.ViewModels;
 
@@ -17,73 +18,150 @@ namespace Web.Controllers
     {
         private readonly ISignService _signService;
         private readonly IQuestionService _questService;
-        public AdminController(ISignService service, IQuestionService srv)
+        private readonly IUserService _userService;
+        public AdminController(ISignService service, IQuestionService srv, IUserService usrv)
         {
             _signService = service;
             _questService = srv;
+            _userService = usrv;
         }
-        [HttpGet(Name = "Creating")]
-        public IActionResult AddSign(Sign model) => model != null ? View(model): View();
-        [HttpGet(Name = "Editing")]
-        public IActionResult EditSign(int modelid)=> RedirectToAction("AddSign", "Admin", _signService.GetSign(modelid));
-        [HttpDelete]
-        public void RemoveSign(int signid) => _signService.RemoveSign(_signService.GetSign(signid));
-
-        [HttpPost]
-        public IActionResult AddSign(Sign model, IFormFile uploadImage)
+        [HttpGet]
+        public IActionResult AddSign() => View(new AddSignViewModel()
         {
+            Types = _signService.GetSignTypes()
+        });
+        [HttpGet]
+        public IActionResult EditSign(int modelid)=> View(new AddSignViewModel()
+        {
+            Sign = _signService.GetSign(modelid),
+            Types = _signService.GetSignTypes()
+
+        });
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditSign(AddSignViewModel model)
+        {
+            model.Types = _signService.GetSignTypes();
             if (!ModelState.IsValid)
                 return View(model);
             else
             {
-                byte[] imageData = null;
-                using (var binaryReader = new BinaryReader(uploadImage.OpenReadStream()))
+                if (model.Image != null)
                 {
-                    imageData = binaryReader.ReadBytes((int)uploadImage.Length);
+                    byte[] imageData = null;
+                    using (var binaryReader = new BinaryReader(model.Image.OpenReadStream()))
+                    {
+                        imageData = binaryReader.ReadBytes((int)model.Image.Length);
+                    }
+                    model.Sign.Image = imageData;
                 }
-                model.Image = imageData;
-                bool test = model.ID != 0;
-                _signService.AddSign(model);
-                if (test) return RedirectToAction("ManageSigns", "Admin");
-                return View(new Sign());
+                _signService.AddSign(model.Sign);
+                return RedirectToAction("ManageSigns", "Admin");
+            }
+        }
+
+        [HttpDelete]
+        public void RemoveSign(int signid) => _signService.RemoveSign(_signService.GetSign(signid));
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddSign(AddSignViewModel model)
+        {
+            model.Types = _signService.GetSignTypes();
+            if (!ModelState.IsValid)
+                return View(model);
+            else
+            {
+                if (model.Image == null && model.Sign.Image == null)
+                {
+                    ModelState.AddModelError("Sign.Image", "Выберите файл изображения");
+                    return View(model);
+                }
+                byte[] imageData = null;
+                using (var binaryReader = new BinaryReader(model.Image.OpenReadStream()))
+                {
+                    imageData = binaryReader.ReadBytes((int)model.Image.Length);
+                }
+                model.Sign.Image = imageData;
+                _signService.AddSign(model.Sign);
+                return RedirectToAction("AddSign");
             }
         }
         public IActionResult ManageSigns() => View(_signService.GetTypesSigns(""));
 
         public IActionResult ManageQuestions() => View(_questService.GetAllQuestions());
 
-        [HttpGet(Name = "Create")]
-        public IActionResult AddQuestion(Question model) =>  View(new AddQuestionViewModel(){Question = model, Signs = _signService.GetTypesSigns("")});
-        [HttpGet(Name = "Edit")]
-        public IActionResult EditQuestion(int id) => RedirectToAction("AddQuestion","Admin", _questService.GetQuestion(id));
+        public IActionResult AddQuestion() =>  View(new AddQuestionViewModel(){Question = new Question(), Signs = _signService.GetTypesSigns("")});
+        public IActionResult EditQuestion(int modelid) => View(new AddQuestionViewModel()
+        {
+            Question = _questService.GetQuestion(modelid),
+            Signs = _signService.GetTypesSigns("")
+        });
+
         [HttpDelete]
-        public void RemoveQuestion(int id) => _questService.RemoveQuestion(_questService.GetQuestion(id));
+        public void RemoveQuestion(int modelid) => _questService.RemoveQuestion(_questService.GetQuestion(modelid));
         [HttpPost]
         public IActionResult AddQuestion(AddQuestionViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
-            else
-            {
-                if (model.Question.Variants.Count < 2 || model.Question.Variants.Count > 5 ||
-                    model.Question.Sign == null)
+                model.Signs = _signService.GetTypesSigns("");
+                model.Question.Sign = _signService.GetSign(model.Question.Sign.ID);
+                if (model.Question.Variants.Count < 2 || model.Question.Variants.Count > 5)
                 {
-                    ModelState.AddModelError("","Проверьте количество вариантов и выбор знака.");
+                    ModelState.AddModelError("Question.Variants","Количество вариантов должно быть от 2 до 5");
                     return View(model);
                 }
-                else
+                if (string.IsNullOrEmpty(model.Question.Text))
                 {
-                    if (model.Question.ID != 0)
-                    {
-                        _questService.EditQuestion(model.Question);
-                        return RedirectToAction("ManageQuestions", "Admin");
-                    }
-                    else
-                    {
-                        _questService.AddQuestion(model.Question);
-                        return View(new AddQuestionViewModel() {Signs = _signService.GetTypesSigns("")});
-                    }
+                    ModelState.AddModelError("Question.Text", "Введите текст вопроса");
+                    return View(model);
                 }
+                if (!(model.Question.ForKids||model.Question.ForBikers||model.Question.ForDrivers||model.Question.ForPedestrians))
+                {
+                    ModelState.AddModelError("Question.ForKids", "Выберите хотя бы один из типов.");
+                    return View(model);
+                }
+            
+                _questService.AddQuestion(model.Question);
+                return RedirectToAction("AddQuestion");
+        }
+
+        [HttpPost]
+        public IActionResult EditQuestion(AddQuestionViewModel model)
+        {
+            model.Signs = _signService.GetTypesSigns("");
+            model.Question.Sign = _signService.GetSign(model.Question.Sign.ID);
+            if (model.Question.Variants.Count < 2 || model.Question.Variants.Count > 5)
+            {
+                ModelState.AddModelError("Question.Variants", "Количество вариантов должно быть от 2 до 5");
+                return View(model);
             }
+            if (string.IsNullOrEmpty(model.Question.Text))
+            {
+                ModelState.AddModelError("Question.Text", "Введите текст вопроса");
+                return View(model);
+            }
+            if (!(model.Question.ForKids || model.Question.ForBikers || model.Question.ForDrivers || model.Question.ForPedestrians))
+            {
+                ModelState.AddModelError("Question.ForKids", "Выберите хотя бы один из типов.");
+                return View(model);
+            }
+            _questService.EditQuestion(model.Question);
+            return RedirectToAction("ManageQuestions", "Admin");
+        }
+
+        public IActionResult ManageUsers() => View(_userService.GetUsers());
+
+        public IActionResult AddAdmin(string user)
+        {
+            _userService.ToggleAdmin(user);
+            return RedirectToAction("ManageUsers", "Admin");
+        }
+
+        public IActionResult RemoveUser(string id)
+        {
+            User user = _userService.GetUser(id);
+            _userService.RemoveUser(user);
+            return RedirectToAction("ManageUsers", "Admin");
         }
     }
 }

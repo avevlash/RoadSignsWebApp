@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service.Implements
 {
@@ -18,10 +19,11 @@ namespace Service.Implements
         public Sign GetSign(int id) => _appContext.Signs.Find(id);
         public void AddSign(Sign sign)
         {
+            //_appContext.Entry(sign.Type).State = EntityState.Unchanged;
             if (sign.ID != 0)
             {
-                _appContext.Signs.Update(sign);
-
+                var itemEntry = _appContext.Signs.Find(sign.ID);
+                _appContext.Entry(itemEntry).CurrentValues.SetValues(sign);
             }
             else
             {
@@ -60,6 +62,11 @@ namespace Service.Implements
         {
             _appContext.Signs.Remove(sign);
             _appContext.SaveChanges();
+        }
+
+        public List<SignType> GetSignTypes()
+        {
+            return _appContext.SignTypes.ToList();
         }
     }
 }

@@ -4,7 +4,7 @@
 }
 
 <main class="container-fluid">
-    <div class="jumbotron-fluid check">
+    <div class="d-flex justify-content-center">
         <h1>Управление дорожными знаками</h1>
     </div>
     <br />
@@ -26,7 +26,7 @@
         {
     <tr>
         <td>@item.Name</td>
-        <td>@item.Type</td>
+        <td>@item.Type.Name</td>
         <td>@item.Information</td>
         <td>@(item.ForKids ? "Да" : "Нет")</td>
         <td>@(item.ForPedestrians ? "Да" : "Нет")</td>

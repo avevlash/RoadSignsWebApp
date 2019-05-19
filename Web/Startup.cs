@@ -31,17 +31,19 @@ namespace Web
         {
             services.AddMvc();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-               .AddCookie(options => //CookieAuthenticationOptions
+               .AddCookie(options => 
                 {
-                   options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-               });
+                   options.LoginPath = new PathString("/Account/Login");
+                   options.AccessDeniedPath = new PathString("/Account/Login");
+                });
             services.AddDbContext<MainContext>(options =>
-                options.UseSqlServer(
+                options.UseLazyLoadingProxies()
+                    .UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITestService, TestService>();
-            services.AddScoped<ISignService, SignService>();
+            services.AddTransient<ISignService, SignService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

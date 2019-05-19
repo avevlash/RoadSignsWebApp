@@ -3,7 +3,7 @@ using Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service.Implements
 {
@@ -20,22 +20,22 @@ namespace Service.Implements
             var query = _appContext.Questions.AsQueryable();
             switch (type)
             {
-                case "Driver":
+                case "Drivers":
                     {
                         query = query.Where(x => x.ForDrivers);
                         break;
                     }
-                case "Biker":
+                case "Bikers":
                     {
                         query = query.Where(x => x.ForBikers);
                         break;
                     }
-                case "Pedestrian":
+                case "Pedestrians":
                     {
                         query = query.Where(x => x.ForPedestrians);
                         break;
                     }
-                case "Kid":
+                case "Kids":
                     {
                         query = query.Where(x => x.ForKids);
                         break;
@@ -52,15 +52,20 @@ namespace Service.Implements
 
         public void FinishUserTest(Test test)
         {
+            foreach (var stat in test.Stats)
+            {
+                _appContext.Entry(stat.Question.Sign).State = EntityState.Unchanged;
+                _appContext.Entry(stat.Question.Sign.Type).State = EntityState.Unchanged;
+            }
             _appContext.Tests.Update(test);
             _appContext.SaveChanges();
         }
 
-        public double GetCorrectAnsPercent(User user)
+        public int GetCorrectAnsPercent(User user)
         {
-            double general = _appContext.Statistics.Where(x => x.Test.User.ID == user.ID).Count();
-            double right = _appContext.Statistics.Where(x => x.Test.User.ID == user.ID && x.HasAnswered).Count();
-            return right / general;
+            int general = _appContext.Statistics.Count(x => x.Test.User.ID == user.ID);
+            int right = _appContext.Statistics.Count(x => x.Test.User.ID == user.ID && x.HasAnswered);
+            return right*100 / general;
         }
 
         public List<Test> GetUserTests(User user) => _appContext.Tests.Where(x => x.User.ID == user.ID).ToList();

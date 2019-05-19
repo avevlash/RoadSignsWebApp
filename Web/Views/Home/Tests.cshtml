@@ -1,0 +1,114 @@
+﻿@model Data.Models.Test
+<div class="d-flex justify-content-center flex-column">
+    <section class="row align-content-center flex-column">
+        <h1 class="text-center" id ="textcontent"></h1>
+        <div class="col-sm-6 col-md-4">
+            <div id="content" class="card">
+
+            </div>
+        </div>
+        <div id="submittest" class="row justify-content-center">
+        </div>
+    </section>
+    <br />
+    <div class="d-flex justify-content-center flex-column">
+        <ul id="pages" class="pagination pg-blue justify-content-center"> 
+            @for (int i = 0; i < 20; i++)
+            {
+                <li class="page-item">
+                    <a class="page-link">@(i+1)</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="~/js/jquery-3.3.1.min.js"></script>
+<script>
+    "use strict";
+    var test = {};
+    var selectedIndex = 0;
+    $(function() {
+        test = @Html.Raw(Json.Serialize(Model, new Newtonsoft.Json.JsonSerializerSettings() {ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore}));
+        CreateTest(selectedIndex);
+        $("#pages").click(function(event) {
+            if (event.target.tagName != "A") return;
+            let val = parseInt(event.target.textContent);
+            selectedIndex = val - 1;
+            CreateTest(selectedIndex);
+            if (selectedIndex === 19) {
+                let btn = document.createElement("button");
+                btn.className = "btn btn-success";
+                btn.id = "subTest";
+                btn.append(document.createTextNode("Завершить тест"));
+                $("#submittest").append(btn);
+            }
+        });
+        $("#submittest").on("click", "#subTest", function () {
+            console.log("test");
+            $.ajax({
+                url: '/Home/SaveExam',
+                type: "POST",
+                data: JSON.stringify(test),
+                contentType: 'application/json; charset=utf-8'
+            });
+        });
+        $("#content").on("click","#answer",function () {
+
+            $("#errors").empty();
+            let answers = $("#content > div > div > label > input[type=radio]");
+            for (let radio of answers) {
+                if (radio.checked) {
+                    test.Stats[selectedIndex].HasAnswered = radio.nextSibling.value === 'true';
+                    $("#errors").append(radio.nextSibling.value === "true" ? "Верно" : "Неверно");
+                    console.log(test);
+                    return;
+                }
+            }
+                $("#errors").append(document.createTextNode("Выберите один из вариантов ответа!"));
+                return;
+        });
+    });
+
+    function CreateTest(index) {
+        $("#submittest").empty();
+        var image = document.createElement('img');
+        image.className = "card-img-top";
+        image.setAttribute("src", "data:image/jpeg;base64, " + test.Stats[index].Question.Sign.Image);
+        $("#content").empty();
+        $("#content").append(image);
+        $("#textcontent").text(test.Stats[index].Question.Text);
+        var ctr = 0;
+        let outerdiv = document.createElement("div");
+        outerdiv.className = "card-body text-center";
+        for (let variant of test.Stats[index].Question.Variants) {           
+            let innerdiv = document.createElement("div");
+            innerdiv.classList.add("form-check");
+            let label = document.createElement("label");
+            label.className = "form-check-label";
+            let radio = document.createElement("input");
+            radio.setAttribute("type", "radio");
+            radio.setAttribute("name", "radios");
+            radio.className = "form-check-input";
+            radio.id = "variant_" + ++ctr;
+            label.append(radio);
+            let hidden = document.createElement("input");
+            hidden.setAttribute("type", "hidden");
+            hidden.id = "answer_" + ctr;
+            hidden.setAttribute("value", variant.IsCorrect);
+            label.append(hidden);
+            label.append(document.createTextNode(variant.Answer));
+            innerdiv.append(label);
+            outerdiv.append(innerdiv);
+        }
+        $("#content").append(outerdiv);
+        let errors = document.createElement("div");
+        errors.id = "errors";
+        errors.className = "text-center";
+        $("#content").append(errors);
+        let btn = document.createElement("button");
+        btn.id = "answer";
+        btn.className = "btn btn-cyan";
+        btn.textContent = "Ответить";
+        $("#content").append(btn);
+    }
+</script>

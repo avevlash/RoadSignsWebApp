@@ -7,10 +7,11 @@ namespace Service.Interfaces
 {
     public interface IUserService
     {
-        void AddUser(User user);
+        User AddUser(User user);
         void RemoveUser(User user);
-        void EditUser(User user);
         User GetUser(string id);
         User GetUserByName(string name, string password);
+        List<User> GetUsers();
+        void ToggleAdmin(string id);
     }
 }

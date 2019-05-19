@@ -1,69 +1,70 @@
-﻿@model Data.Models.Sign;
-    <main class="pt-5 max-lg-5">
+﻿@model Web.ViewModels.AddSignViewModel;
+    <main class="pt-5 container">
        
-                    <h4 class="mb-2 mb-sm-0 pt-1 jumbotron-fluid">
-                        <span>Добавить вопрос</span>
-                    </h4>
+        <div class="d-flex justify-content-center">
+            <h4>Добавление дорожного знака</h4>
+        </div>
                 
-        <form enctype="multipart/form-data" asp-action="AddSign" asp-controller="Admin" method="post">
+        <form enctype="multipart/form-data" asp-area="" asp-action="AddSign" asp-controller="Admin" method="post">
             <div class="validation" asp-validation-summary="ModelOnly"></div>
                     <div class="form-group">
-                        <input asp-for="Name" type="text" placeholder="Название знака" class="form-control" value="" />
+                        <input asp-for="Sign.Name" type="text" placeholder="Название знака" class="form-control" />
+                        @Html.ValidationMessageFor(x=>x.Sign.Name)
                     </div>
                     <div class="form-group">
                         <label for="select1">Тип знака: </label>
-                        <select id="select1" asp-for="Type" class="browser-default custom-select">
-                            <option value="Запрещающий">Запрещающий</option>
-                            <option value="Предупреждающий">Предупреждающий</option>
-                            <option value="Знак приоритета">Знак приоритета</option>
-                            <option value="Предписывающий">Предписывающий</option>
-                            <option value="Информационно-указательный">Информационно-указательный</option>
-                            <option value="Знак сервиса">Знак сервиса</option>
-                            <option value="Табличка к знаку">Табличка к знаку</option>
+                        <select id="select1" asp-items="@(new SelectList(Model.Types, "ID", "Name"))" asp-for="Sign.Type.ID" class="browser-default custom-select">
                         </select>
+                        @Html.ValidationMessageFor(x=>x.Sign.Type)
                     </div>
                     <div class="form-group">
-                        <div class="input-group">
+                        @*<div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroupFileAddon01">Загрузка</span>
+                                <span class="input-group-text" id="inputGroupFileAddon01">Поиск</span>
                             </div>
                             <div class="custom-file">
-                                <input name="uploadImage" type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
-                                <label class="custom-file-label" for="inputGroupFile01">Картинка знака</label>
+                                <input type="file" asp-for="Image" class="custom-file-input" id="inputGroupFile01"
+                                       aria-describedby="inputGroupFileAddon01" />
+                                <label class="custom-file-label" for="inputGroupFile01">Изображение знака</label>
+                            </div>
+                        </div>*@
+                        <div class="input-group">    
+                            <div class="custom-file">
+                                <input type="file" asp-for="Image" class="custom-file-input" id="inputGroupFile01"/>
+                                <label class="custom-file-label" for="inputGroupFile01">Изображение знака</label>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlTextarea1">Информация о знаке</label>
-                        <textarea asp-for="Information" class="form-control rounded-0" id="exampleFormControlTextarea1" rows="4"></textarea>
+                        <textarea asp-for="Sign.Information" class="form-control rounded-0" id="exampleFormControlTextarea1" rows="4"></textarea>
+                        @Html.ValidationMessageFor(x=>x.Sign.Information)
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlTextarea1">Подсказки</label>
-                        <textarea asp-for="Hints" class="form-control rounded-0" id="exampleFormControlTextarea2" rows="3"></textarea>
+                        <textarea asp-for="Sign.Hints" class="form-control rounded-0" id="exampleFormControlTextarea2" rows="3"></textarea>
+                        @Html.ValidationMessageFor(x=>x.Sign.Hints)
                     </div>
                     <div class="form-group">
                         <label>Предназначение знака: </label>
                         <div class="form-inline">
                             <label>
-                                <input type="checkbox" name="kids" value="true" asp-for="ForKids" />
-                                Для детей
+                                @Html.CheckBoxFor(m=>m.Sign.ForKids) Для детей &nbsp;
                             </label>
                             <label>
-                                <input type="checkbox" name="kids" value="true" asp-for="ForPedestrians" />
-                                Для пешеходов
+                                @Html.CheckBoxFor(m => m.Sign.ForPedestrians) Для пешеходов &nbsp;
                             </label>
                             <label>
-                                <input type="checkbox" name="kids" value="true" asp-for="ForDrivers" />
-                                Для водителей
+                                @Html.CheckBoxFor(m => m.Sign.ForDrivers)Для водителей &nbsp;
                             </label>
                             <label>
-                                <input type="checkbox" name="kids" value="true" asp-for="ForBikers" />
-                                Для велосипедистов
+                                @Html.CheckBoxFor(m => m.Sign.ForBikers) Для велосипедистов &nbsp;
                             </label>
                         </div>
+                        @Html.ValidationMessageFor(x=>x.Sign.ForKids)
                     </div>
 
                     <br />
-                    <button type="submit" class="btn btn-blue-grey justify-content-center">Добавить знак</button>
+                    <input type="submit" class="btn btn-blue-grey justify-content-center" value="Сохранить"/>
         </form>
     </main>

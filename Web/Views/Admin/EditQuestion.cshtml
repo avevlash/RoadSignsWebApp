@@ -2,11 +2,12 @@
 <main class="container mt-5 container-fluid">
     <div class="justify-content-center d-flex">
         <h4>
-            Редакция вопроса
+            Добавление вопроса
         </h4>
     </div>
-    <form asp-area="" enctype="multipart/form-data" asp-action="AddQuestion" asp-controller="Admin" method="post">
+    <form asp-area="" enctype="multipart/form-data" asp-action="EditQuestion" asp-controller="Admin" method="post">
         @Html.ValidationSummary()
+        <input type="hidden" asp-for="Question.ID" />
         <div class="form-row card mb-4 mr-5 ml-5">
             <div id="form_create" class="mb-4 mr-5 ml-5 mt-5">
                 <div class="form-group">
@@ -46,6 +47,19 @@
                 <div class="justify-content-center form-group">
                     <label>Варианты ответа:</label>
                     <button id="add_new_answer" type="button" class="btn btn-group-toggle"><span class="fa"></span>Добавить вариант</button>
+                    @if (Model.Question.Variants != null)
+                    {
+                        for (int i = 0; i < Model.Question.Variants.Count; i++)
+                        {
+                            <div class="form-group" id="form_group_@i">
+                                <div class="form-row">
+                                    <div class="col"><input type="hidden" asp-for="Question.Variants[i].ID"/><input type="text" autocomplete="off" required name="@("Question.Variants["+i+"].Answer")" value="@Model.Question.Variants[i].Answer" id="Variants[@i]_Text" class="form-control"></div>
+                                    <div class="col"><input class="custom-control-indicator" id="Variants[@i]_IsCorrect" name="Question.Variants[@i].IsCorrect" type="checkbox" @(Model.Question.Variants[i].IsCorrect?"checked=\"checked\"":"")><label for="Variants[@i]_IsCorrect">Правильный вариант</label></div>
+                                    <div class="col"><button id="btn0" type="button" class="btn btn-danger">Удалить<span class="fa fa-minus-circle"></span></button></div>
+                                </div>
+                            </div>
+                        }
+                    }
                 </div>
                 @Html.ValidationMessageFor(x => x.Question.Variants)
                 <!--Варианты ответа-->

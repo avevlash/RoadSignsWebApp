@@ -16,6 +16,7 @@
     <link href="~/vendor.min.css" rel="stylesheet">
 </head>
 <body>
+
     <!--Main Navigation-->
     <header>
         @if (!User.Identity.IsAuthenticated)
@@ -82,31 +83,33 @@
 
                 <!-- Links -->
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-                    <!-- Left -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false">Изучение знаков</a>
-                            <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" asp-area="" asp-action="Signs" asp-controller="Home">Водителям</a>
-                                <a class="dropdown-item" href="#">Пешеходам</a>
-                                <a class="dropdown-item" href="#">Велосипедистам</a>
-                                <a class="dropdown-item" href="#">Детям</a>
+                            <div class="dropdown-menu " aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" asp-area="" asp-action="Signs" asp-controller="Home" asp-route-type="Drivers">Водителям</a>
+                                <a class="dropdown-item" asp-area="" asp-action="Signs" asp-controller="Home" asp-route-type="Pedestrians">Пешеходам</a>
+                                <a class="dropdown-item" asp-area="" asp-action="Signs" asp-controller="Home" asp-route-type="Bikers">Велосипедистам</a>
+                                <a class="dropdown-item" asp-area="" asp-action="Signs" asp-controller="Home" asp-route-type="Kids">Детям</a>
                             </div>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink2" data-toggle="dropdown"
-                               aria-haspopup="true" aria-expanded="false">Тесты</a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-                                <a class="dropdown-item" href="#">Для водителей</a>
-                                <a class="dropdown-item" href="#">Для пешеходов</a>
-                                <a class="dropdown-item" href="#">Для велосипедистов</a>
-                                <a class="dropdown-item" href="#">Для детей</a>
-                            </div>
-                        </li>
-                    </ul>
-
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink2" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">Тесты</a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                                    <a class="dropdown-item" asp-area="" asp-action="Tests" asp-controller="Home" asp-route-type="Drivers">Для водителей</a>
+                                    <a class="dropdown-item" asp-area="" asp-action="Tests" asp-controller="Home" asp-route-type="Pedestrians">Для пешеходов</a>
+                                    <a class="dropdown-item" asp-area="" asp-action="Tests" asp-controller="Home" asp-route-type="Bikers">Для велосипедистов</a>
+                                    <a class="dropdown-item" asp-area="" asp-action="Tests" asp-controller="Home" asp-route-type="Kids">Для детей</a>
+                                </div>
+                            </li>                          
+                         }
+                        </ul>
+                   
+                    <!-- Left -->
                     <!-- Right -->
                     @if (User.IsInRole("admin"))
                     {
@@ -117,7 +120,7 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink3">
                                     <a class="dropdown-item" asp-area="" asp-action="ManageSigns" asp-controller="Admin">Знаки</a>
                                     <a class="dropdown-item" asp-area="" asp-action="ManageQuestions" asp-controller="Admin">Вопросы</a>
-                                    <a class="dropdown-item" href="#">Пользователи</a>
+                                    <a class="dropdown-item" asp-area="" asp-action="ManageUsers" asp-controller="Admin">Пользователи</a>
                                 </div>
                             </li>
                         </ul>
@@ -134,31 +137,30 @@
         @RenderBody()
     </main>
     <!--Footer-->
-<footer class="page-footer text-center font-small mdb-color darken-2 mt-4 wow fadeIn">
+<footer class="page-footer text-center font-small mdb-color darken-2 mt-4 fadeIn">
 
     <!-- Social icons -->
     <!-- Social icons -->
     <!--Copyright-->
     <div class="footer-copyright py-3">
-        <a href="#" target="_blank"> Ангелина Знайченко </a> © 2019
+        <a href="#"> Ангелина Знайченко </a> © 2019
     </div>
     <!--/.Copyright-->
 
 </footer>
 <script type="text/javascript">
-    refresh = function() {
+    refresh = function () {
         location.reload();
     }
 </script>
-    @*<script type="text/javascript" src="~/js/jquery-3.3.1.min.js"></script>*@
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="~/js/popper.min.js"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="~/js/mdb.min.js"></script>
+@*<script type="text/javascript" src="~/js/jquery-3.3.1.min.js"></script>*@
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="~/js/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="~/js/mdb.min.js"></script>
 
-    <script type="text/javascript" src="~/vendor.min.js"></script>
-   
+<script type="text/javascript" src="~/vendor.min.js"></script>
 </body>
 </html>

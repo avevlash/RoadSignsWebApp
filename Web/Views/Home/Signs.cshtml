@@ -1,1 +1,46 @@
-﻿
+﻿@model Web.ViewModels.SignsViewModel
+<main class="container-fluid">
+    <div class="text-center">
+        <h1>Дорожные знаки</h1>
+    </div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        @for(int i =0; i<Model.Types.Count;i++)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(i==0?"active":"")" id="@Model.Types[i].Value-tab" data-toggle="tab" href="#@Model.Types[i].Value" role="tab" aria-controls="@Model.Types[i].Value"
+                   aria-selected="@(i==0?"true":"false")">@Model.Types[i].Name</a>
+            </li>
+        } 
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        @foreach (var type in Model.Types)
+        {
+            <div class="tab-pane fade show active" id="@type.Value" role="tabpanel" aria-labelledby="@type.Value-tab">
+                @{
+                    foreach (var item in Model.Signs.Where(x => x.Type.ID==type.ID))
+                    {
+                        <div class="row">
+                            <div class="col-lg-5 col-xl-5 pb-3">
+                                <div class="view overlay rounded z-depth-2">
+                                    @Html.Raw("<img class =\"img-fluid\" \" src=\"data:image/jpeg;base64,"
+                                              + Convert.ToBase64String(item.Image) + "\" />")
+                                </div>
+                               
+                            </div>
+                            <div class="col-lg-7 col-xl-7">
+                                <h3 class="mb-4 font-weight-bold dark-grey-text">
+                                    <strong>@item.Name</strong>
+                                </h3>
+                                <p>@item.Information</p>
+                                <br/>
+                                <p>@item.Hints</p>
+                            </div>
+                        </div>
+                        <hr />
+                    }
+                }
+            </div>
+        }        
+    </div>
+</main>
+@*<script type="text/javascript" src="~/js/jquery-3.3.1.min.js"></script>*@

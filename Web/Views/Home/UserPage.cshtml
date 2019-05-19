@@ -1,0 +1,33 @@
+﻿@model Web.ViewModels.UserPageViewModel
+@{
+    ViewData["Title"] = "Кабинет пользователя";
+}
+<main class="justify-content-center">
+    <h1>Здравствуйте, @Model.UserName</h1>
+    <br />
+    <h3>Правильных ответов в тестах: @Model.AnsPercent%</h3>
+    
+    <div class="col-md-6 col-sm-12">
+        
+    </div>
+    <table class="table table-hover">
+        @foreach (var item in Model.UserTests)
+        {
+            <thead>
+            <tr>
+                <th>№</th>
+                <th>Вопрос</th>
+                <th>Ответ</th>
+            </tr>
+            </thead>
+            for (int i = 0; i < item.Stats.Count; i++)
+             {
+                 <tr>
+                     <td>@(i+1)</td>
+                     <td>@(item.Stats[i].Question.Text)</td>
+                     <td>@(item.Stats[i].HasAnswered?"Верно":"Неверно")</td>
+                 </tr>
+             }
+        }
+    </table>
+</main>

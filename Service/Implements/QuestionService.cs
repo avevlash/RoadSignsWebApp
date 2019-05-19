@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service.Implements
 {
@@ -19,11 +20,16 @@ namespace Service.Implements
         public void AddQuestion(Question question)
         {
             _appContext.Questions.Add(question);
+            _appContext.Entry(question.Sign).State = EntityState.Unchanged;
+            _appContext.Entry(question.Sign.Type).State = EntityState.Unchanged;
             _appContext.SaveChanges();
         }
 
         public void EditQuestion(Question question)
         {
+            _appContext.Variants.RemoveRange(_appContext.Variants.Where(x=>question.Variants.Contains(x)));
+            _appContext.Entry(question.Sign).State = EntityState.Unchanged;
+            _appContext.Entry(question.Sign.Type).State = EntityState.Unchanged;
             _appContext.Questions.Update(question);
             _appContext.SaveChanges();
         }

@@ -4,7 +4,7 @@
 }
 
 <main class="container-fluid">
-    <div class="jumbotron-fluid check">
+    <div class="d-flex justify-content-center">
         <h1>Управление вопросами</h1>
     </div>
     <br />
@@ -32,7 +32,7 @@
                 <td>@(item.ForPedestrians ? "Да" : "Нет")</td>
                 <td>@(item.ForDrivers ? "Да" : "Нет")</td>
                 <td>@(item.ForBikers ? "Да" : "Нет")</td>
-                <td> <a asp-action="AddQuestion" asp-controller="Admin" asp-route-modelid="@item.ID" class="btn btn-dark-green">Изменить</a> </td>
+                <td> <a asp-action="EditQuestion" asp-controller="Admin" asp-route-modelid="@item.ID" class="btn btn-dark-green">Изменить</a> </td>
                 <td> <a asp-action="RemoveQuestion" asp-controller="Admin" asp-route-modelid="@item.ID" class="btn btn-danger">Удалить</a> </td>
             </tr>
         }

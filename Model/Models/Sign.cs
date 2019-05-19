@@ -8,11 +8,11 @@ namespace Data.Models
     public class Sign
     {
         public int ID { get; set; }
-        [Required] public string Name { get; set; }
-        [Required] public byte[] Image { get; set; }
-        [Required] public string Type { get; set; }
-        [Required] public string Information { get; set; }
-        [Required] public string Hints { get; set; }
+        [Required(ErrorMessage = "Введите название знака")] public string Name { get; set; }
+        public byte[] Image { get; set; }
+        [Required(ErrorMessage = "Выберите тип знака")] public virtual SignType Type { get; set; }
+        [Required(ErrorMessage = "Введите информацию о знаке")] public string Information { get; set; }
+        [Required(ErrorMessage = "Введите посказки к знаку")] public string Hints { get; set; }
         public bool ForKids { get; set; }
         public bool ForPedestrians { get; set; }
         public bool ForBikers { get; set; }

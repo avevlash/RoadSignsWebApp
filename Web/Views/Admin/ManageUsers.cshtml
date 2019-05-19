@@ -1,0 +1,29 @@
+﻿@model List<Data.Models.User>;
+<main class="container-fluid">
+    <div class="d-flex justify-content-center">
+        <h1>Управление пользователями</h1>
+    </div>
+    <br />
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th>Имя</th>
+            <th>Почта</th>
+            <th>Администратор</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>@item.Name</td>
+        <td>@item.Email</td>
+        <td>@(item.IsAdmin?"Да":"Нет")</td>
+        <td> <a asp-action="AddAdmin" asp-controller="Admin" asp-route-user="@item.ID" class="btn btn-light-green">Изменить права</a> </td>
+        <td> <a asp-action="RemoveUser" asp-controller="Admin" asp-route-id="@item.ID" class="btn btn-danger">Удалить</a> </td>
+    </tr>
+        }
+    </table>
+    <br />
+</main>
